@@ -1,19 +1,21 @@
-from telnetlib import EC
-
 import pytest
 from selenium import webdriver
 
+from data.user_data import exiting_user
 from pages.login_page import LoginPage
-from tests.test_login import VALID_EMAIL, VALID_PASSWORD
+from selenium.webdriver.chrome.options import Options
 
 
 @pytest.fixture
 def driver():
-    driver = webdriver.Chrome()
-    #driver.implicitly_wait(5) #неявное ожидание
-    driver.maximize_window() #открыв. на весь размер экрана
+    options = Options()
+    options.add_argument("--lang=en-US")
+    options.add_experimental_option("prefs", {"intl.accept_languages": "en-US,en"})
 
-    driver.get("https://telranedu.web.app/home")
+    driver = webdriver.Chrome(options=options)
+    driver.implicitly_wait(5)
+    driver.maximize_window()
+    driver.get("https://telranedu.web.app/")
 
     yield driver
 
@@ -22,9 +24,11 @@ def driver():
 @pytest.fixture
 def authenticated_driver(driver):
     login_page = LoginPage(driver)
+    user = exiting_user()
+
     login_page.open_login_form()
-    login_page.fill_email(VALID_EMAIL)
-    login_page.fill_password(VALID_PASSWORD)
+    login_page.fill_email(user.username)
+    login_page.fill_password(user.password)
     login_page.submit_login()
 
     return driver
