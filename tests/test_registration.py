@@ -82,5 +82,4 @@ def test_registration_exists_user(driver):
     registration_page.submit_registration()
 
     assert registration_page.get_alert_text() == "User already exist"
-    re
-    gistration_page.accept_alert()
+    registration_page.accept_alert()

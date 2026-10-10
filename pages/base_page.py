@@ -32,7 +32,10 @@ class BasePage:
 
 
     def accept_alert(self):
-        self.driver.switch_to.alert.accept()
+        # Безпечно чекаємо появи алерта і закриваємо його через accept()
+        alert = self.wait_until_alert_present()
+        alert.accept()
+
 
     def wait_until_visible(self, locator, timeout=5):
         return WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))

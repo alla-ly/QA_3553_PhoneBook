@@ -46,8 +46,13 @@ def test_add_contact_empty_name(authenticated_driver):
 
     logger.info("Testing contact creation with empty name: phone=%s", contact.phone)
 
-    contact_page.create_contact_steps(contact)
-    assert contact_page.is_add_button_active()
+    # Замість create_contact_steps робимо покроково без очікування URL /contacts
+    contact_page.open_contact_form()
+    contact_page.fill_contact_form(contact)
+    contact_page.submit_contact()
+
+    # Перевіряємо, що кнопка активна/неактивна та контакт не з'явився у списку
+    assert contact_page.is_add_button_active()  # або перевірка що ми досі на формі
     contacts_page.open_contacts_list()
     assert contacts_page.contact_cards_count(contact.phone) == 0
 
@@ -59,7 +64,11 @@ def test_add_contact_empty_last_name(authenticated_driver):
 
     logger.info("Testing contact creation with empty last name: phone=%s", contact.phone)
 
-    contact_page.create_contact_steps(contact)
+    # Замість create_contact_steps робимо покроково без очікування URL /contacts
+    contact_page.open_contact_form()
+    contact_page.fill_contact_form(contact)
+    contact_page.submit_contact()
+
     assert contact_page.is_add_button_active()
     contacts_page.open_contacts_list()
     assert contacts_page.contact_cards_count(contact.phone) == 0
@@ -74,7 +83,11 @@ def test_add_contact_empty_email(authenticated_driver):
 
     logger.info("Testing contact creation with empty email: phone=%s", contact.phone)
 
-    contact_page.create_contact_steps(contact)
+    # Замість create_contact_steps робимо покроково без очікування URL /contacts
+    contact_page.open_contact_form()
+    contact_page.fill_contact_form(contact)
+    contact_page.submit_contact()
+
     assert contact_page.is_add_button_active()
     contacts_page.open_contacts_list()
     assert contacts_page.contact_cards_count(contact.phone) == 0
@@ -87,30 +100,60 @@ def test_add_contact_empty_address(authenticated_driver):
 
     logger.info("Testing contact creation with empty address: phone=%s", contact.phone)
 
-    contact_page.create_contact_steps(contact)
+    # Замість create_contact_steps робимо покроково без очікування URL /contacts
+    contact_page.open_contact_form()
+    contact_page.fill_contact_form(contact)
+    contact_page.submit_contact()
+
     assert contact_page.is_add_button_active()
     contacts_page.open_contacts_list()
     assert contacts_page.contact_cards_count(contact.phone) == 0
 
 
-@pytest.mark.regression
-@pytest.mark.parametrize("field,value,expected_alert", INVALID_CONTACT_FIELDS)
-def test_add_contact_invalid_field_rejected(authenticated_driver, field, value, expected_alert):
-    contact_page = ContactPage(authenticated_driver)
-    contacts_page = ContactsPage(authenticated_driver)
-    contact = create_contact(**{field: value})
+# @pytest.mark.regression
+# @pytest.mark.parametrize("field,value,expected_alert", INVALID_CONTACT_FIELDS)
+# def test_add_contact_invalid_field_rejected(authenticated_driver, field, value, expected_alert):
+#     contact_page = ContactPage(authenticated_driver)
+#     contacts_page = ContactsPage(authenticated_driver)
+#     contact = create_contact(**{field: value})
+#
+#     logger.info("Testing invalid contact field: field=%s, phone=%s",
+#                 field,
+#                 contact.phone)
+#
+#     contact_page.create_contact_steps(contact)
+#
+#     assert contact_page.get_alert_text().strip() == expected_alert
+#     contact_page.accept_alert()
+#     assert contact_page.is_add_button_active()
+#
+#     contacts_page.open_contacts_list()
+#     assert contacts_page.contact_cards_count(contact.phone) == 0
 
-    logger.info("Testing invalid contact field: field=%s, phone=%s",
-                field,
-                contact.phone)
+    @pytest.mark.regression
+    @pytest.mark.parametrize("field,value,expected_alert", INVALID_CONTACT_FIELDS)
+    def test_add_contact_invalid_field_rejected(authenticated_driver, field, value, expected_alert):
+        contact_page = ContactPage(authenticated_driver)
+        contacts_page = ContactsPage(authenticated_driver)
+        contact = create_contact(**{field: value})
 
-    contact_page.create_contact_steps(contact)
-    assert contact_page.get_alert_text().strip() == expected_alert
-    contact_page.accept_alert()
-    assert contact_page.is_add_button_active()
+        logger.info("Testing invalid contact field: field=%s, phone=%s",
+                    field,
+                    contact.phone)
 
-    contacts_page.open_contacts_list()
-    assert contacts_page.contact_cards_count(contact.phone) == 0
+        # Робимо кроки окремо без очікування переходу на /contacts
+        contact_page.open_contact_form()
+        contact_page.fill_contact_form(contact)
+        contact_page.submit_contact()
+
+        # Тепер безпечно працюємо з алерт вікном, яке одразу з'явилося
+        assert contact_page.get_alert_text().strip() == expected_alert
+        contact_page.accept_alert()
+
+        assert contact_page.is_add_button_active()
+
+        contacts_page.open_contacts_list()
+        assert contacts_page.contact_cards_count(contact.phone) == 0
 
 
 # def test_add_contact_invalid_phone_too_long(authenticated_driver):
