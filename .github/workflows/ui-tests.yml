@@ -62,7 +62,6 @@ jobs:
             logs/
             screenshots/
             allure-results/
-          if-no-files-found: ignore
 
 
 

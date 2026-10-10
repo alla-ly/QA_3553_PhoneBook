@@ -21,18 +21,19 @@ configure_logging()
 logger = logging.getLogger(__name__)
 SCREENSHOTS_DIR = Path(__file__).parent / "screenshots"
 
+
 def pytest_addoption(parser):
     parser.addoption(
         "--browser",
         action="store",
         default="chrome",
-        choices=["chrome", "firefox", "edge"],
+        choices=["chrome", "firefox","edge"],
         help="Browser to run tests in: chrome or firefox")
 
     parser.addoption(
         "--headless",
         action = "store_true",
-        help = "Run browser without a visible window"
+        help="Run the browser without a visible window"
     )
 
 
@@ -58,6 +59,7 @@ def driver(request):
     else:
         raise ValueError(f"Unsupported browser:{browser}")
 
+
     driver.implicitly_wait(5)
     driver.maximize_window()
     driver.get(BASE_URL)
@@ -66,6 +68,7 @@ def driver(request):
 
     logger.info("Closing browser session")
     driver.quit()
+
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -78,12 +81,11 @@ def pytest_runtest_makereport(item, call):
 def save_screenshot_on_failure(request, driver):
     yield
 
-    setup_report = getattr(request.node,"rep_setup",None)
+    setup_report = getattr(request.node, "rep_setup", None)
     call_report = getattr(request.node, "rep_call", None)
-    failed = (setup_report and setup_report.failed) or(call_report and call_report.failed)
+    failed = (setup_report and setup_report.failed) or (call_report and call_report.failed)
 
     if not failed:
-
         return
 
     SCREENSHOTS_DIR.mkdir(exist_ok=True)
@@ -98,7 +100,7 @@ def save_screenshot_on_failure(request, driver):
         logger.info("Screenshot saved: %s", screenshot_path)
         allure.attach.file(
             str(screenshot_path),
-            name = "screenshot",
+            name="screenshot",
             attachment_type=allure.attachment_type.PNG
         )
 
@@ -117,6 +119,7 @@ def authenticated_driver(driver):
 
     return driver
 
+
 @pytest.fixture
 def ensure_min_contacts(authenticated_driver):
     contacts_page = ContactsPage(authenticated_driver)
@@ -133,7 +136,6 @@ def ensure_min_contacts(authenticated_driver):
         contacts_page.open_contacts_list()
 
     return authenticated_driver
-
 
 
 
