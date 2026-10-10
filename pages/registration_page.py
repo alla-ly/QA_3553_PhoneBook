@@ -37,22 +37,13 @@ class RegistrationPage(BasePage):
 
     def is_registered(self):
         try:
-            WebDriverWait(self.driver,timeout=5).until(
-                EC.visibility_of_element_located(self.SIGN_OUT_BTN)
-            )
+            # WebDriverWait(self.driver,timeout=5).until(
+            #     EC.visibility_of_element_located(self.SIGN_OUT_BTN)
+            # )
+            self.wait_until_visible(self.SIGN_OUT_BTN)
             return True
         except TimeoutException:
             return False
-
-    # def get_alert_text(self):
-    #     alert = WebDriverWait(self.driver,timeout=5).until(
-    #         EC.alert_is_present()
-    #     )
-    #
-    #     return alert.text
-    #
-    # def accept_alert(self):
-    #     self.driver.switch_to.alert.accept()
 
 
 

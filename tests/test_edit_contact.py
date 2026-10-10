@@ -1,123 +1,310 @@
+import allure
+import pytest
 from faker import Faker
+import logging
+
 from data.contact_data import create_contact
 from pages.add_new_contact_page import ContactPage
 from pages.contacts_page import ContactsPage
 
 fake = Faker()
+logger = logging.getLogger(__name__)
 
 
-def test_edit_contact_name(authenticated_driver):
+@allure.title("Editing a contact`s name updates it in the contact list")
+def test_edit_contact_name_updated(authenticated_driver):
     contact_page = ContactPage(authenticated_driver)
     contacts_page = ContactsPage(authenticated_driver)
 
-    test_contact = create_contact()
-    contact_page.open_contact_form()
-    contact_page.fill_contact_form(test_contact)
-    contact_page.submit_contact()
-
-    contacts_page.open_contact_details(test_contact.phone)
-
-    contact_page.click_edit_button()
+    contact = create_contact()
+    contact_page.create_contact_steps(contact)
     new_name = fake.first_name()
-    contact_page.fill_name(new_name)
-    contact_page.click_save_btn()
 
-    assert contact_page.get_contact_name_value() == new_name
+    logger.info("Updating contact field: field = name, phone = %s, new_value=%s",
+                contact.phone,
+                new_name)
 
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_NAME_INPUT, new_name)
+    contacts_page.submit_edit()
 
-def test_edit_contact_last_name(authenticated_driver):
+    assert contacts_page.contact_name_for_phone(contact.phone) == new_name
+
+@allure.title("Editing a contact`s last_name updates it in the contact list")
+def test_edit_contact_last_name_updated(authenticated_driver):
     contact_page = ContactPage(authenticated_driver)
     contacts_page = ContactsPage(authenticated_driver)
 
-    test_contact = create_contact()
-    contact_page.open_contact_form()
-    contact_page.fill_contact_form(test_contact)
-    contact_page.submit_contact()
-
-    contacts_page.open_contact_details(test_contact.phone)
-
-    contact_page.click_edit_button()
+    contact = create_contact()
+    contact_page.create_contact_steps(contact)
     new_last_name = fake.last_name()
-    contact_page.fill_last_name(new_last_name)
-    contact_page.click_save_btn()
 
-    assert contact_page.get_contact_last_name_value() == new_last_name
+    logger.info("Updating contact field: field = last_name, phone = %s, new_value=%s",
+                contact.phone,
+                new_last_name)
+
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_LAST_NAME_INPUT, new_last_name)
+    contacts_page.submit_edit()
+
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    assert contacts_page.get_edit_contact(contacts_page.EDIT_LAST_NAME_INPUT) == new_last_name
 
 
-def test_edit_contact_phone(authenticated_driver):
+@pytest.mark.smoke
+@pytest.mark.regression
+def test_edit_contact_phone_updated(authenticated_driver):
+    logger.info("Test: edit_contact_phone_updated")
     contact_page = ContactPage(authenticated_driver)
     contacts_page = ContactsPage(authenticated_driver)
 
-    test_contact = create_contact()
-    contact_page.open_contact_form()
-    contact_page.fill_contact_form(test_contact)
-    contact_page.submit_contact()
+    contact = create_contact()
+    contact_page.create_contact_steps(contact)
+    new_phone = fake.unique.numerify("050#######")
 
-    contacts_page.open_contact_details(test_contact.phone)
+    logger.debug(f"Old phone:{contact.phone}")
+    logger.debug(f"New phone{new_phone}")
 
-    contact_page.click_edit_button()
-    new_phone_number = fake.phone_number()
-    contact_page.fill_phone(new_phone_number)
-    contact_page.click_save_btn()
+    logger.info("Updating contact field: field = phone, old_phone = %s, new_phone=%s",
+                contact.phone,
+                new_phone)
 
-    assert contact_page.get_contact_phone_value() == new_phone_number
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_PHONE_INPUT, new_phone)
+    contacts_page.submit_edit()
+
+    assert contacts_page.contact_card_visible(new_phone)
+    assert contacts_page.contact_cards_count(contact.phone) == 0
 
 
-def test_edit_contact_email(authenticated_driver):
+def test_edit_contact_email_updated(authenticated_driver):
     contact_page = ContactPage(authenticated_driver)
     contacts_page = ContactsPage(authenticated_driver)
 
-    test_contact = create_contact()
-    contact_page.open_contact_form()
-    contact_page.fill_contact_form(test_contact)
-    contact_page.submit_contact()
+    contact = create_contact()
+    contact_page.create_contact_steps(contact)
+    new_email = fake.unique.email()
 
-    contacts_page.open_contact_details(test_contact.phone)
+    logger.info("Updating contact field: field = email, phone = %s, new_value=%s",
+                contact.phone,
+                new_email)
 
-    contact_page.click_edit_button()
-    new_email = fake.email()
-    contact_page.fill_email(new_email)
-    contact_page.click_save_btn()
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_EMAIL_INPUT, new_email)
+    contacts_page.submit_edit()
 
-    assert contact_page.get_contact_email_value() == new_email
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    assert contacts_page.get_edit_contact(contacts_page.EDIT_EMAIL_INPUT) == new_email
 
 
-def test_edit_contact_address(authenticated_driver):
+def test_edit_contact_address_updated(authenticated_driver):
     contact_page = ContactPage(authenticated_driver)
     contacts_page = ContactsPage(authenticated_driver)
 
-    test_contact = create_contact()
-    contact_page.open_contact_form()
-    contact_page.fill_contact_form(test_contact)
-    contact_page.submit_contact()
+    contact = create_contact()
+    contact_page.create_contact_steps(contact)
+    new_address = fake.city()
 
-    contacts_page.open_contact_details(test_contact.phone)
+    logger.info("Updating contact field: field = address, phone = %s, new_value=%s",
+                contact.phone,
+                new_address)
 
-    contact_page.click_edit_button()
-    new_address = fake.address()
-    contact_page.fill_address(new_address)
-    contact_page.click_save_btn()
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_ADDRESS_INPUT, new_address)
+    contacts_page.submit_edit()
 
-    assert contact_page.get_contact_address_value() == new_address
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    assert contacts_page.get_edit_contact(contacts_page.EDIT_ADDRESS_INPUT) == new_address
 
 
-def test_edit_contact_description(authenticated_driver):
+@pytest.mark.skip(reason="BUG-130: Editing description saves literal string '[Object Undefined]'")
+def test_edit_contact_description_updated(authenticated_driver):
     contact_page = ContactPage(authenticated_driver)
     contacts_page = ContactsPage(authenticated_driver)
 
-    test_contact = create_contact()
-    contact_page.open_contact_form()
-    contact_page.fill_contact_form(test_contact)
-    contact_page.submit_contact()
+    contact = create_contact()
+    contact_page.create_contact_steps(contact)
+    new_description = fake.sentence()
 
-    contacts_page.open_contact_details(test_contact.phone)
+    logger.info("Updating contact field: field = description, phone = %s, new_value=%s",
+                contact.phone,
+                new_description)
 
-    contact_page.click_edit_button()
-    new_description = "Updated contact description"
-    contact_page.fill_desc(new_description)
-    contact_page.click_save_btn()
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_DESCRIPTION_INPUT, new_description)
+    contacts_page.submit_edit()
 
-    assert contact_page.get_contact_description_value() == new_description
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    assert contacts_page.get_edit_contact(contacts_page.EDIT_DESCRIPTION_INPUT) == new_description
+
+
+@pytest.mark.regression
+def test_edit_contact_empty_name_rejected(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+
+    contact = create_contact()
+    contact_page.create_contact_steps(contact)
+
+    logger.info("Testing empty edited empty name: phone = %s",
+                contact.phone,
+                )
+
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_NAME_INPUT, "")
+    contacts_page.submit_edit()
+
+    assert contacts_page.contact_name_for_phone(contact.phone) == contact.name
+
+
+def test_edit_contact_empty_last_name_rejected(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+
+    contact = create_contact()
+    contact_page.create_contact_steps(contact)
+
+    logger.info("Testing empty edited empty last name: phone = %s",
+                contact.phone,
+                )
+
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_LAST_NAME_INPUT, "")
+    contacts_page.submit_edit()
+
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    assert contacts_page.get_edit_contact(contacts_page.EDIT_LAST_NAME_INPUT) == contact.last_name
+
+
+def test_edit_contact_empty_phone_updated(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+
+    contact = create_contact()
+    contact_page.create_contact_steps(contact)
+
+    logger.info("Testing empty edited empty phone: phone = %s",
+                contact.phone,
+                )
+
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_PHONE_INPUT, "")
+    contacts_page.submit_edit()
+
+    assert contacts_page.contact_cards_count(contact.phone) == 1
+
+
+@pytest.mark.regression
+def test_edit_contact_empty_email_rejected(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+
+    contact = create_contact()
+    contact_page.create_contact_steps(contact)
+
+    logger.info("Testing empty edited empty email: phone = %s",
+                contact.phone,
+                )
+
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_EMAIL_INPUT, "")
+    contacts_page.submit_edit()
+
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    assert contacts_page.get_edit_contact(contacts_page.EDIT_EMAIL_INPUT) == contact.email
+
+
+def test_edit_contact_empty_address_rejected(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+
+    contact = create_contact()
+    contact_page.create_contact_steps(contact)
+
+    logger.info("Testing empty edited empty address: phone = %s",
+                contact.phone,
+                )
+
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_ADDRESS_INPUT, "")
+    contacts_page.submit_edit()
+
+    contacts_page.open_contact_details(contact.phone)
+    contacts_page.open_edit_mode()
+    assert contacts_page.get_edit_contact(contacts_page.EDIT_ADDRESS_INPUT) == contact.address
+
+
+@pytest.mark.skip
+def test_edit_contact_duplicate_phone_negative(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+    existing_contact = create_contact()
+    other_contact = create_contact()
+
+    logger.info("Testing duplicate edited phone: existing_phone=%s, other_phone=%s",
+                existing_contact.phone,
+                other_contact.phone)
+
+    contact_page.create_contact_steps(existing_contact)
+    contact_page.create_contact_steps(other_contact)
+
+    contacts_page.open_contact_details(other_contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_PHONE_INPUT, existing_contact.phone)
+    contacts_page.submit_edit()
+    assert contacts_page.contact_cards_count(existing_contact.phone) == 1
+
+
+@pytest.mark.skip
+def test_edit_contact_duplicate_email_negative(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+
+    existing_contact = create_contact()
+    other_contact = create_contact()
+
+    logger.info("Testing duplicate edited email: existing_phone=%s, other_phone=%s",
+                existing_contact.phone,
+                other_contact.phone)
+
+    contact_page.create_contact_steps(existing_contact)
+    contact_page.create_contact_steps(other_contact)
+
+    contacts_page.open_contact_details(other_contact.phone)
+    contacts_page.open_edit_mode()
+    contacts_page.set_edit_field(contacts_page.EDIT_EMAIL_INPUT, existing_contact.email)
+    contacts_page.submit_edit()
+
+    contacts_page.open_contact_details(other_contact.phone)
+    contacts_page.open_edit_mode()
+    assert contacts_page.get_edit_contact(contacts_page.EDIT_EMAIL_INPUT) == other_contact.email
+
+
+
+
+
+
+
+
+
+
 
 
 

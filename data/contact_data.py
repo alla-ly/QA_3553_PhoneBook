@@ -12,7 +12,6 @@ def create_contact(name=None, last_name=None, phone=None,
         email=email if email is not None else fake.unique.email(),
         address=address if address is not None else fake.street_address(),
         description=description if description is not None else fake.sentence(nb_words=5)
-
     )
 
 # def create_contact(**overrides) -> Contact:
