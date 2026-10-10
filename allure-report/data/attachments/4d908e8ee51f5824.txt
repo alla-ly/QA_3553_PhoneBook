@@ -1,0 +1,29 @@
+2026-10-06 19:47:44,628-INFO-conftest-Starting browser session
+2026-10-06 19:47:46,960-INFO-tests.test_login-Testing successful login: username=margo@gmail.com
+2026-10-06 19:47:46,960-INFO-pages.login_page-Opening login form
+2026-10-06 19:47:52,372-ERROR-utils.selenium_listener-WebDriver exception: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//button[text()='LoginBROKEN']"}
+  (Session info: chrome=154.0.8037.93); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#nosuchelementexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff7387f9d55+5a55]
+	chromedriver!(No symbol) [0x7ff73871f540]
+	chromedriver!(No symbol) [0x7ff7385445fd]
+	chromedriver!(No symbol) [0x7ff73859fca1]
+	chromedriver!(No symbol) [0x7ff73859ff6c]
+	chromedriver!(No symbol) [0x7ff7385f3077]
+	chromedriver!(No symbol) [0x7ff7385efcd9]
+	chromedriver!(No symbol) [0x7ff738591a12]
+	chromedriver!(No symbol) [0x7ff738592823]
+	chromedriver!GetHandleVerifier [0x7ff738c104b1+41c1b1]
+	chromedriver!GetHandleVerifier [0x7ff738c3e26b+449f6b]
+	chromedriver!GetHandleVerifier [0x7ff738c3274e+43e44e]
+	chromedriver!GetHandleVerifier [0x7ff7388f32fe+feffe]
+	chromedriver!(No symbol) [0x7ff73872cb55]
+	chromedriver!(No symbol) [0x7ff738727f64]
+	chromedriver!(No symbol) [0x7ff7387280f4]
+	chromedriver!(No symbol) [0x7ff738712e4c]
+	KERNEL32!BaseThreadInitThunk [0x7fff01917034+14]
+	ntdll!RtlUserThreadStart [0x7fff02cdd0d1+21]
+
+2026-10-06 19:47:52,482-ERROR-conftest-Test failed: tests/test_login.py::test_login_success
+2026-10-06 19:47:52,712-INFO-conftest-Screenshot saved: C:\Users\Alla\QA_3553_PhoneBook\screenshots\test_login_success_2026-10-06_19-47-52.png
+2026-10-06 19:47:52,714-INFO-conftest-Closing browser session

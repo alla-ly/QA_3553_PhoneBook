@@ -1,0 +1,319 @@
+import logging
+
+import pytest
+from faker import Faker
+
+from data.contact_data import create_contact
+from data.contact_datasets import INVALID_CONTACT_FIELDS, SUCCESS_DESCRIPTIONS
+from pages.add_new_contact_page import ContactPage
+from pages.contacts_page import ContactsPage
+
+fake = Faker()
+logger = logging.getLogger(__name__)
+
+@pytest.mark.smoke
+@pytest.mark.regression
+@pytest.mark.parametrize("description",SUCCESS_DESCRIPTIONS)
+def test_add_contact_success(authenticated_driver, description):
+    logger.info("Test: test_add_contact_success_all_fields")
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+    contact = create_contact() if description is None else create_contact(description=description)
+
+    logger.info("Testing contact creation: description = %s, phone =%s",
+                description,
+                contact.phone)
+    contact_page.create_contact_steps(contact)
+
+    assert contacts_page.contact_card_visible(contact.phone)
+
+
+# def test_add_contact_success_req_fields(authenticated_driver):
+#     contact_page = ContactPage(authenticated_driver)
+#     contacts_page = ContactsPage(authenticated_driver)
+#
+#     contact = create_contact(description="")
+#     contact_page.create_contact_steps(contact)
+#
+#     assert contacts_page.contact_card_visible(contact.phone)
+
+
+def test_add_contact_empty_name(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+    contact = create_contact(name="")
+
+    logger.info("Testing contact creation with empty name: phone=%s", contact.phone)
+
+    contact_page.create_contact_steps(contact)
+    assert contact_page.is_add_button_active()
+
+    contacts_page.open_contacts_list()
+    assert contacts_page.contact_cards_count(contact.phone) == 0
+
+
+def test_add_contact_empty_last_name(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+    contact = create_contact(last_name="")
+    logger.info("Testing contact creation with empty last name: phone=%s", contact.phone)
+    contact_page.create_contact_steps(contact)
+
+    assert contact_page.is_add_button_active()
+
+    contacts_page.open_contacts_list()
+    assert contacts_page.contact_cards_count(contact.phone) == 0
+
+
+# @pytest.mark.skip(reason = "BUG-123: Contact with empty mail")
+@pytest.mark.xfail(reason="BUG-123: Contact with empty mail")
+def test_add_contact_empty_email(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+    contact = create_contact(email="")
+
+    logger.info("Testing contact creation with empty email: phone=%s", contact.phone)
+
+    contact_page.create_contact_steps(contact)
+    assert contact_page.is_add_button_active()
+    contacts_page.open_contacts_list()
+    assert contacts_page.contact_cards_count(contact.phone) == 0
+
+
+def test_add_contact_empty_address(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+    contact = create_contact(address="")
+
+    logger.info("Testing contact creation with empty address: phone=%s", contact.phone)
+    contact_page.create_contact_steps(contact)
+
+    assert contact_page.is_add_button_active()
+    contacts_page.open_contacts_list()
+    assert contacts_page.contact_cards_count(contact.phone) == 0
+
+@pytest.mark.regression
+@pytest.mark.parametrize("field,value,expected_alert", INVALID_CONTACT_FIELDS)
+def test_add_contact_invalid_field_rejected(authenticated_driver, field, value, expected_alert):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+    contact = create_contact(**{field: value})
+
+    logger.info("Testing invalid contact field: field=%s, phone=%s",
+                field,
+                contact.phone)
+
+    contact_page.create_contact_steps(contact)
+    assert contact_page.get_alert_text().strip() == expected_alert
+    contact_page.accept_alert()
+    assert contact_page.is_add_button_active()
+
+    contacts_page.open_contacts_list()
+    assert contacts_page.contact_cards_count(contact.phone) == 0
+
+
+# def test_add_contact_invalid_phone_too_long(authenticated_driver):
+#     contact_page = ContactPage(authenticated_driver)
+#     contacts_page = ContactsPage(authenticated_driver)
+#     contact = create_contact(phone=fake.numerify("#"*20))
+#
+#     contact_page.create_contact_steps(contact)
+#
+#
+#     assert contact_page.get_alert_text().strip() == PHONE_ALERT_TEXT
+#     contact_page.accept_alert()
+#     assert contact_page.is_add_button_active()
+#
+#     contacts_page.open_contacts_list()
+#     assert contacts_page.contact_cards_count(contact.phone) == 0
+
+
+# def test_add_contact_invalid_phone_letters(authenticated_driver):
+#     contact_page = ContactPage(authenticated_driver)
+#     contacts_page = ContactsPage(authenticated_driver)
+#     contact = create_contact(phone="jfhkdfghkfdh")
+#
+#     contact_page.create_contact_steps(contact)
+#
+#
+#     assert contact_page.get_alert_text().strip() == PHONE_ALERT_TEXT
+#     contact_page.accept_alert()
+#     assert contact_page.is_add_button_active()
+#
+#     contacts_page.open_contacts_list()
+#     assert contacts_page.contact_cards_count(contact.phone) == 0
+
+
+# def test_add_contact_invalid_email(authenticated_driver,field,value,expected_alert):
+#     contact_page = ContactPage(authenticated_driver)
+#     contacts_page = ContactsPage(authenticated_driver)
+#     contact = create_contact(**{field: value}) #(**{email: "dkjvkfdfkjkfdj"}) - >create_contact(email = "dkjvkfdfkjkfdj")
+#
+#     contact_page.create_contact_steps(contact)
+#
+#     assert contact_page.get_alert_text().strip() == EMAIL_ALERT_TEXT
+#     contact_page.accept_alert()
+#
+#     assert contact_page.is_add_button_active()
+#
+#     contacts_page.open_contacts_list()
+#     assert contacts_page.contact_cards_count(contact.phone) == 0
+
+
+@pytest.mark.xfail(reason="BUG-124: Duplicate phone")
+def test_add_contact_duplicate_phone_rejected(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    contacts_page = ContactsPage(authenticated_driver)
+
+    shared_phone = fake.unique.numerify("050##########")
+    first_contact = create_contact(phone=shared_phone)
+    second_contact = create_contact(phone=shared_phone)
+
+    logger.info("Testing duplicate contact phone: phone=%s", shared_phone)
+
+
+    contact_page.create_contact_steps(first_contact)
+    assert contacts_page.contact_card_visible(shared_phone)
+
+    contact_page.create_contact_steps(second_contact)
+
+    contacts_page.open_contacts_list()
+    assert contacts_page.contact_cards_count(shared_phone) == 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+HW_test_negative
+
+def test_add_contact_unsuccessful_name_field_empty(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    random_suffix = random.randint(1, 10000000)
+
+    contact = Contact(
+        name="",
+        last_name=fake.last_name(),
+        phone=fake.numerify("050##########"),
+        email=fake.unique.email(),
+        address=fake.street_address(),
+        description=fake.sentence(nb_words=5)
+        )
+    print(random_suffix)
+    contact_page.open_contact_form()
+    contact_page.fill_contact_form(contact)
+    contact_page.submit_contact()
+
+    assert "/add" in authenticated_driver.current_url
+
+def test_add_contact_unsuccessful_last_name_field_empty(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    random_suffix = random.randint(1, 10000000)
+
+    contact = Contact(
+        name=fake.first_name(),
+        last_name="",
+        phone=fake.numerify("050##########"),
+        email=fake.unique.email(),
+        address=fake.street_address(),
+        description=fake.sentence(nb_words=5)
+        )
+    print(random_suffix)
+    contact_page.open_contact_form()
+    contact_page.fill_contact_form(contact)
+    contact_page.submit_contact()
+    assert "/add" in authenticated_driver.current_url
+
+def test_add_contact_unsuccessful_phone_field_empty(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    random_suffix = random.randint(1, 10000000)
+
+    contact = Contact(
+        name=fake.first_name(),
+        last_name=fake.last_name(),
+        phone="",
+        email=fake.unique.email(),
+        address=fake.street_address(),
+        description=fake.sentence(nb_words=5)
+        )
+    print(random_suffix)
+    contact_page.open_contact_form()
+    contact_page.fill_contact_form(contact)
+    contact_page.submit_contact()
+
+    assert "Phone not valid:" in contact_page.get_alert_text()
+    contact_page.accept_alert()
+
+
+def test_add_contact_unsuccessful_email_field_empty(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    random_suffix = random.randint(1, 10000000)
+
+    contact = Contact(
+        name=fake.first_name(),
+        last_name=fake.last_name(),
+        phone=fake.numerify("050##########"),
+        email="",
+        address=fake.street_address(),
+        description=fake.sentence(nb_words=5)
+        )
+    print(random_suffix)
+    contact_page.open_contact_form()
+    contact_page.fill_contact_form(contact)
+    contact_page.submit_contact()
+
+    assert "/add" in authenticated_driver.current_url # БАГ -с пустым полем email регистритует контакт
+
+def test_add_contact_unsuccessful_address_field_empty(authenticated_driver):
+    contact_page = ContactPage(authenticated_driver)
+    random_suffix = random.randint(1, 10000000)
+
+    contact = Contact(
+        name=fake.first_name(),
+        last_name=fake.last_name(),
+        phone=fake.numerify("050##########"),
+        email=fake.unique.email(),
+        address="",
+        description=fake.sentence(nb_words=5)
+        )
+    print(random_suffix)
+    contact_page.open_contact_form()
+    contact_page.fill_contact_form(contact)
+    contact_page.submit_contact()
+
+    assert "/add" in authenticated_driver.current_url
+
+"""
+

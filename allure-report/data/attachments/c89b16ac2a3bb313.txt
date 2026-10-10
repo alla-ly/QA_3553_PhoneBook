@@ -1,0 +1,60 @@
+[32mINFO    [0m conftest:conftest.py:26 Starting browser session
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:241 Starting new HTTP connection (1): localhost:1515
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session HTTP/1.1" 200 0
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/timeouts HTTP/1.1" 200 0
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/url HTTP/1.1" 200 0
+[32mINFO    [0m tests.test_login:test_login.py:40 Testing rejected login: case = invalid_email_user, username=margogmail.com
+[32mINFO    [0m pages.login_page:login_page.py:25 Opening login form
+[35mDEBUG   [0m pages.base_page:base_page.py:16 Click on  ('css selector', "[href='/login']")
+[35mDEBUG   [0m utils.selenium_listener:selenium_listener.py:11 WebDriver find: by=css selector, value=[href='/login']
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/element HTTP/1.1" 200 0
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/execute/sync HTTP/1.1" 200 0
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "GET /session/6d0dfe767ef292f7ab544c6a992ec36f/element/f.0EC5E55EEF3FC5A6D7EF26244A8839C3.d.EF9EC71F735DA53ACD9DD288D6694F7E.e.4/enabled HTTP/1.1" 200 0
+[35mDEBUG   [0m utils.selenium_listener:selenium_listener.py:15 Webdriver click
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/element/f.0EC5E55EEF3FC5A6D7EF26244A8839C3.d.EF9EC71F735DA53ACD9DD288D6694F7E.e.4/click HTTP/1.1" 200 0
+[35mDEBUG   [0m pages.base_page:base_page.py:20 Fill('css selector', "input[name='email']") with margogmail.com
+[35mDEBUG   [0m utils.selenium_listener:selenium_listener.py:11 WebDriver find: by=css selector, value=input[name='email']
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/element HTTP/1.1" 200 0
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/execute/sync HTTP/1.1" 200 0
+[35mDEBUG   [0m utils.selenium_listener:selenium_listener.py:19 WebDriver change value
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/element/f.0EC5E55EEF3FC5A6D7EF26244A8839C3.d.EF9EC71F735DA53ACD9DD288D6694F7E.e.20/clear HTTP/1.1" 200 0
+[35mDEBUG   [0m utils.selenium_listener:selenium_listener.py:19 WebDriver change value
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/element/f.0EC5E55EEF3FC5A6D7EF26244A8839C3.d.EF9EC71F735DA53ACD9DD288D6694F7E.e.20/value HTTP/1.1" 200 0
+[35mDEBUG   [0m pages.base_page:base_page.py:20 Fill('css selector', "input[name='password']") with Mmar123456$
+[35mDEBUG   [0m utils.selenium_listener:selenium_listener.py:11 WebDriver find: by=css selector, value=input[name='password']
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/element HTTP/1.1" 200 0
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/execute/sync HTTP/1.1" 200 0
+[35mDEBUG   [0m utils.selenium_listener:selenium_listener.py:19 WebDriver change value
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/element/f.0EC5E55EEF3FC5A6D7EF26244A8839C3.d.EF9EC71F735DA53ACD9DD288D6694F7E.e.23/clear HTTP/1.1" 200 0
+[35mDEBUG   [0m utils.selenium_listener:selenium_listener.py:19 WebDriver change value
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/element/f.0EC5E55EEF3FC5A6D7EF26244A8839C3.d.EF9EC71F735DA53ACD9DD288D6694F7E.e.23/value HTTP/1.1" 200 0
+[35mDEBUG   [0m pages.base_page:base_page.py:16 Click on  ('xpath', "//button[text()='LoginBROKEN']")
+[35mDEBUG   [0m utils.selenium_listener:selenium_listener.py:11 WebDriver find: by=xpath, value=//button[text()='LoginBROKEN']
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "POST /session/6d0dfe767ef292f7ab544c6a992ec36f/element HTTP/1.1" 404 0
+[31m[1mERROR   [0m utils.selenium_listener:selenium_listener.py:23 WebDriver exception: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//button[text()='LoginBROKEN']"}
+  (Session info: chrome=154.0.8037.93); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#nosuchelementexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff7387f9d55+5a55]
+	chromedriver!(No symbol) [0x7ff73871f540]
+	chromedriver!(No symbol) [0x7ff7385445fd]
+	chromedriver!(No symbol) [0x7ff73859fca1]
+	chromedriver!(No symbol) [0x7ff73859ff6c]
+	chromedriver!(No symbol) [0x7ff7385f3077]
+	chromedriver!(No symbol) [0x7ff7385efcd9]
+	chromedriver!(No symbol) [0x7ff738591a12]
+	chromedriver!(No symbol) [0x7ff738592823]
+	chromedriver!GetHandleVerifier [0x7ff738c104b1+41c1b1]
+	chromedriver!GetHandleVerifier [0x7ff738c3e26b+449f6b]
+	chromedriver!GetHandleVerifier [0x7ff738c3274e+43e44e]
+	chromedriver!GetHandleVerifier [0x7ff7388f32fe+feffe]
+	chromedriver!(No symbol) [0x7ff73872cb55]
+	chromedriver!(No symbol) [0x7ff738727f64]
+	chromedriver!(No symbol) [0x7ff7387280f4]
+	chromedriver!(No symbol) [0x7ff738712e4c]
+	KERNEL32!BaseThreadInitThunk [0x7fff01917034+14]
+	ntdll!RtlUserThreadStart [0x7fff02cdd0d1+21]
+[31m[1mERROR   [0m conftest:conftest.py:69 Test failed: tests/test_login.py::test_login_rejected[invalid_email]
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "GET /session/6d0dfe767ef292f7ab544c6a992ec36f/screenshot HTTP/1.1" 200 0
+[32mINFO    [0m conftest:conftest.py:71 Screenshot saved: C:\Users\Alla\QA_3553_PhoneBook\screenshots\test_login_rejected[invalid_email]_2026-10-06_19-48-04.png
+[32mINFO    [0m conftest:conftest.py:41 Closing browser session
+[35mDEBUG   [0m urllib3.connectionpool:connectionpool.py:544 http://localhost:1515 "DELETE /session/6d0dfe767ef292f7ab544c6a992ec36f HTTP/1.1" 200 0
